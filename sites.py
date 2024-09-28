@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 from django.http import HttpRequest
 from django.template.response import TemplateResponse
