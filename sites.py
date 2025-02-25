@@ -1,8 +1,10 @@
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
+from django.contrib import admin
 from django.http import HttpRequest
 from django.template.response import TemplateResponse
 from django.urls import path
+from django_superapp.urls import extend_superapp_admin_urlpatterns
 from unfold.sites import UnfoldAdminSite
 
 from .forms import LoginForm
@@ -60,3 +62,9 @@ class SuperAppAdminSite(UnfoldAdminSite):
 
 
 superapp_admin_site = SuperAppAdminSite()
+
+if importlib.util.find_spec("allauth"):
+    from allauth.account.decorators import secure_admin_login
+    admin.autodiscover()
+    admin.site.login = secure_admin_login(admin.site.login)
+    superapp_admin_site.login = secure_admin_login(superapp_admin_site.login)

@@ -1,5 +1,5 @@
-from django.urls import reverse_lazy
 from django.templatetags.static import static
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 
@@ -14,15 +14,18 @@ def extend_superapp_settings(main_settings):
         'admin_confirm',
         'unfold',
         "unfold.contrib.filters",
+        "unfold.contrib.forms",
+        "unfold.contrib.inlines",
         "unfold.contrib.import_export",
         "unfold.contrib.guardian",
         "unfold.contrib.simple_history",
-        "unfold.contrib.forms",
-        'superapp.apps.admin_portal',
+        "massadmin",
         'django_svelte_jsoneditor',
+        'superapp.apps.admin_portal',
     ] + main_settings['INSTALLED_APPS'] + [
         "debug_toolbar",
         "import_export",
+        "django_cleanup.apps.CleanupConfig",
     ]
     main_settings.update({
         'LOGIN_URL': "admin:login",
@@ -34,6 +37,7 @@ def extend_superapp_settings(main_settings):
         "SITE_TITLE": _("SuperApp"),
         "SITE_SYMBOL": "settings",
         "SHOW_HISTORY": False,
+        "SHOW_LANGUAGES": True,
         "TABS": [],
         "SITE_LOGO": {
             # "light": lambda request: static("images/logo-light.svg"),  # light mode
@@ -75,3 +79,9 @@ def extend_superapp_settings(main_settings):
             lambda request: static("admin_portal/js/modals.js"),
         ],
     }
+    main_settings['MASSEDIT'] = {
+        'ADD_ACTION_GLOBALLY': False,
+    }
+    main_settings['MIDDLEWARE'] += [
+        'superapp.apps.admin_portal.middleware.RequestCacheMiddleware',
+    ]

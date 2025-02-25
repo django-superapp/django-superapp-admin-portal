@@ -16,6 +16,6 @@ class LoginForm(AuthenticationForm):
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(request, *args, **kwargs)
 
-        if hasattr(settings, "DEFAULT_LOGIN_USERNAME") and hasattr(settings, "DEFAULT_LOGIN_PASSWORD"):
-            self.fields["username"].initial = settings.LOGIN_USERNAME
+        if hasattr(settings, "DEFAULT_LOGIN_EMAIL") and hasattr(settings, "DEFAULT_LOGIN_PASSWORD"):
+            self.fields["email"].initial = settings.LOGIN_EMAIL
             self.fields["password"].initial = settings.LOGIN_PASSWORD

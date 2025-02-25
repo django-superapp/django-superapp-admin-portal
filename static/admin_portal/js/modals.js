@@ -43,7 +43,7 @@ window.open = function (url, name, features) {
     top: 0;
     bottom: 0;
     left: 0;
-    right: 0;    
+    right: 0;
     z-index: ${50 + openedWindowsIdx};
     background-color: #111827ab;
   `;

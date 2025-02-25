@@ -1,30 +1,19 @@
-import copy
-from typing import List, Optional, Dict, Any
+from typing import Optional
 
 from django.contrib.admin import helpers
 from django.contrib.admin.utils import lookup_field
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import ForeignKey
 from django.forms import ModelChoiceField
 from django.http import HttpRequest
-from django.urls import reverse, URLPattern, path
-from django.utils.text import wrap
-from django_svelte_jsoneditor.widgets import SvelteJSONEditorWidget
-from import_export.admin import ImportExportModelAdmin
-from unfold.admin import ModelAdmin, UnfoldAdminReadonlyField
-from unfold.contrib.forms.widgets import WysiwygWidget
-from unfold.dataclasses import UnfoldAction
-from unfold.widgets import UnfoldBooleanSwitchWidget, UnfoldAdminFileFieldWidget
-from django.db import models
+from unfold.admin import UnfoldAdminReadonlyField
 
-from admin_confirm import AdminConfirmMixin
-
+# Keep exporting these classes for backwards compatibility
 from .db_fields import ChainedForeignKey
 from .widgets import ChainedAdminSelect
 
 
 class SuperAppAdminReadonlyField(UnfoldAdminReadonlyField):
-
     def is_custom_html_field(self) -> bool:
         field, obj, model_admin = (
             self.field["field"],
@@ -41,6 +30,7 @@ class SuperAppAdminReadonlyField(UnfoldAdminReadonlyField):
 
 
 helpers.AdminReadonlyField = SuperAppAdminReadonlyField
+
 
 class ChainedForeignKeyAdmin:
     def formfield_for_foreignkey(
