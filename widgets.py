@@ -1,7 +1,8 @@
-from django.contrib.admin.widgets import AutocompleteSelect
-from django.conf import settings
-from django import forms
 import json
+
+from django import forms
+from django.conf import settings
+from django.contrib.admin.widgets import AutocompleteSelect
 
 
 class ChainedAdminSelect(AutocompleteSelect):
@@ -31,8 +32,11 @@ class ChainedAdminSelect(AutocompleteSelect):
                 "data-automatically-select-unique-choice": json.dumps(self.field.automatically_select_unique_choice),
                 "data-filters": json.dumps(self.field.filters),
                 "lang": self.i18n_name,
-                "class": (attrs["class"]
-                         + (" " if attrs["class"] else "")).replace("admin-autocomplete", "admin-autocomplete-chained"),
+                "class": (
+                        attrs["class"]
+                        + (" " if attrs["class"] else "")
+                        + "admin-autocomplete"
+                ).replace("admin-autocomplete", "admin-autocomplete-chained"),
             }
         )
         return attrs
@@ -53,7 +57,7 @@ class ChainedAdminSelect(AutocompleteSelect):
                + i18n_file
                + (
                    "admin/js/jquery.init.js",
-                   "js/autocomplete.chained.js",
+                   "admin_portal/js/autocomplete.chained.js",
                ),
             css={
                 "screen": (

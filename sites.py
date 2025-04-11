@@ -1,3 +1,4 @@
+import importlib.util
 from typing import Optional, Dict, Any, List
 
 from django.contrib import admin
@@ -8,8 +9,6 @@ from django_superapp.urls import extend_superapp_admin_urlpatterns
 from unfold.sites import UnfoldAdminSite
 
 from .forms import LoginForm
-
-from django_superapp.urls import extend_superapp_admin_urlpatterns
 
 
 class SuperAppAdminSite(UnfoldAdminSite):
@@ -53,6 +52,11 @@ class SuperAppAdminSite(UnfoldAdminSite):
         for sidebar in super_sidebar_list:
             sidebar_items = sidebar.get("items", [])
             sidebar_items = [item for item in sidebar_items if item.get("permission", lambda x: True)(request)]
+            # check if item title is a callback and call it using request if it is
+            sidebar_items = [
+                {**item, "title": item["title"](request) if callable(item["title"]) else item["title"]}
+                for item in sidebar_items
+            ]
             if sidebar_items:
                 sidebar_list.append({
                     **sidebar,
