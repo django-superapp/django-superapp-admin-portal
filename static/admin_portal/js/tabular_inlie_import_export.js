@@ -42,6 +42,10 @@ function tableToCSV(table) {
                 let value;
                 if (input.type === 'checkbox') {
                     value = input.checked ? 'true' : 'false';
+                } else if (input.type === 'select-one') {
+                    const selectedOption = input.options[input.selectedIndex];
+                    const optionText = selectedOption ? selectedOption.text : '';
+                    value = input.value ? `${input.value} (${optionText})` : '';
                 } else {
                     value = input.value || '';
                     if (input.type === 'number') {
@@ -168,7 +172,7 @@ $(function() {
                 .map(line => line.split('\t'));
 
             if (!data.length) {
-                console.error('No data to import');
+                alert('No data to import');
                 return;
             }
 
@@ -190,7 +194,10 @@ $(function() {
                 // Update editable fields in matching row
                 const cells = matchingRow.querySelectorAll('td:not(.delete)');
                 cells.forEach((cell, cellIndex) => {
-                    if (cellIndex >= rowData.length) return;
+                    if (cellIndex >= rowData.length) {
+                        console.warn("Row data doesn't match cell count:", rowData);
+                        return;
+                    }
                     
                     const input = findInputInCell(cell);
                     if (input && !input.readOnly && !input.disabled) {
@@ -198,12 +205,45 @@ $(function() {
                         if (value !== '') {
                             if (input.type === 'checkbox') {
                                 input.checked = value.toLowerCase() === 'true';
+                                $(input).trigger('change');
+                            } else if (input.type === 'select-one') {
+                                // Check if the value is in the format "value (text)"
+                                const match = value.match(/^(.*?)\s*\((.*?)\)$/);
+                                if (match) {
+                                    const optionValue = match[1].trim();
+                                    const optionText = match[2].trim();
+                                    
+                                    // Check if option exists
+                                    let optionExists = false;
+                                    for (let i = 0; i < input.options.length; i++) {
+                                        if (input.options[i].value === optionValue) {
+                                            optionExists = true;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    // Create option if it doesn't exist
+                                    if (!optionExists && optionValue && optionText) {
+                                        const newOption = document.createElement('option');
+                                        newOption.value = optionValue;
+                                        newOption.text = optionText;
+                                        input.add(newOption);
+                                    }
+                                    
+                                    // Set the value
+                                    $(input).val(optionValue).trigger('change');
+                                } else {
+                                    // If not in the expected format, try to set the value directly
+                                    $(input).val(value).trigger('change');
+                                }
                             } else {
-                                input.value = value;
+                                $(input).val(value).trigger('change');
                             }
-                            // Trigger change event for any listeners
-                            input.dispatchEvent(new Event('change', { bubbles: true }));
+                        } else {
+                            console.warn("Empty value for input:", input);
                         }
+                    } else {
+                        console.warn('No editable input found for cell:', cell);
                     }
                 });
             });

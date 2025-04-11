@@ -49,8 +49,10 @@
                         const filters = JSON.parse(element.dataset.filters);
                         const dynamic_filters = JSON.parse(element.dataset.dynamicFilters);
                         if(dynamic_filters) {
-                            for(const key in filters) {
-                                const v = $(this).closest('fieldset').find(`[data-field-name=${filters[key]}]`).val();
+                            for(const key in dynamic_filters) {
+                                const value = dynamic_filters[key];
+                                const elm = $(this).closest('fieldset').find(`[data-field-name="${value}"]`);
+                                const v = elm.val();
                                 if(v) {
                                     filters[key] = v;
                                 }

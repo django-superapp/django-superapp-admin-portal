@@ -3,6 +3,8 @@ from typing import List, Optional, Dict, Any, Union
 
 from admin_confirm import AdminConfirmMixin
 from django.db import models
+from django.db.models import ForeignKey
+from django.forms import ModelChoiceField
 from django.http import HttpRequest
 from django.urls import reverse, URLPattern, path
 from django.utils.text import wrap
@@ -14,6 +16,8 @@ from unfold.dataclasses import UnfoldAction
 from unfold.widgets import UnfoldBooleanSwitchWidget, UnfoldAdminFileFieldWidget
 
 from .autocomplete import CachedAutocompleteForeignKeyMixins
+from .db_fields import ChainedForeignKey
+from .widgets import ChainedAdminSelect
 
 
 class SuperAppModelAdmin(AdminConfirmMixin, ModelAdmin, ImportExportModelAdmin):
@@ -28,7 +32,19 @@ class SuperAppModelAdmin(AdminConfirmMixin, ModelAdmin, ImportExportModelAdmin):
         models.FileField: {
             "widget": UnfoldAdminFileFieldWidget,
         },
+
     }
+
+    def formfield_for_foreignkey(
+            self, db_field: ForeignKey, request: HttpRequest, **kwargs
+    ) -> Optional[ModelChoiceField]:
+        db = kwargs.get("using")
+
+        if isinstance(db_field, ChainedForeignKey):
+            kwargs["widget"] = ChainedAdminSelect(
+                db_field, self.admin_site, using=db
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj)
