@@ -3,6 +3,8 @@ import json
 from django import forms
 from django.conf import settings
 from django.contrib.admin.widgets import AutocompleteSelect
+from django.forms import Widget, TextInput
+from django.template.loader import render_to_string
 
 
 class ChainedAdminSelect(AutocompleteSelect):
@@ -66,3 +68,25 @@ class ChainedAdminSelect(AutocompleteSelect):
                 ),
             },
         )
+
+
+class PasswordToggleWidget(TextInput):
+    """
+    A widget that displays a password field with a toggle button to show/hide the password.
+    Uses Tailwind CSS for styling and includes a button to toggle password visibility.
+    """
+    template_name = 'admin/password_toggle_widget.html'
+    
+    class Media:
+        js = ('admin_portal/js/password_toggle.js',)
+        
+    def __init__(self, attrs=None, render_value=False):
+        super().__init__(attrs)
+        self.render_value = render_value
+        
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context['widget']['type'] = 'password'
+        # We don't need to add classes here since they're directly in the template
+        return context
+
