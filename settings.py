@@ -38,6 +38,7 @@ def extend_superapp_settings(main_settings):
         "SITE_SYMBOL": "settings",
         "SHOW_HISTORY": False,
         "SHOW_LANGUAGES": True,
+        "SHOW_BACK_BUTTON": True,
         "TABS": [],
         "SITE_LOGO": {
             # "light": lambda request: static("images/logo-light.svg"),  # light mode
@@ -60,7 +61,7 @@ def extend_superapp_settings(main_settings):
         },
         "LOGIN": {
             # "image": lambda request: static("images/login-bg.jpg"),
-        },        
+        },
         "SIDEBAR": {
             "show_search": False,
             "show_all_applications": True,
