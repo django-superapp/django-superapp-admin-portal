@@ -1,7 +1,7 @@
 from django.contrib.admin import helpers
 from django.contrib.admin.utils import lookup_field
 from django.core.exceptions import ObjectDoesNotExist
-from unfold.admin import UnfoldAdminReadonlyField
+from unfold.fields import UnfoldAdminReadonlyField  # moved out of unfold.admin in django-unfold 0.94
 
 # Keep exporting these classes for backwards compatibility
 from .admin import SuperAppModelAdmin
